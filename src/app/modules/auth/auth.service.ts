@@ -7,6 +7,7 @@ import AppError from "../../errorHelpers/AppError";
 import { createNewAccessTokenWithRefreshToken } from "../../utils/userTokens";
 import { User } from "../user/user.model";
 
+
 // const credentialsLogin = async (payload: Partial<IUser>) => {
 //     const { email, password } = payload;
 
@@ -45,41 +46,33 @@ import { User } from "../user/user.model";
 
 // }
 const getNewAccessToken = async (refreshToken: string) => {
-  const newAccessToken = await createNewAccessTokenWithRefreshToken(
-    refreshToken
-  );
+    const newAccessToken = await createNewAccessTokenWithRefreshToken(refreshToken)
 
-  return {
-    accessToken: newAccessToken,
-  };
-};
-const resetPassword = async (
-  oldPassword: string,
-  newPassword: string,
-  decodedToken: JwtPayload
-) => {
-  const user = await User.findById(decodedToken.userId);
+    return {
+        accessToken: newAccessToken
+    }
 
-  const isOldPasswordMatch = await bcryptjs.compare(
-    oldPassword,
-    user!.password as string
-  );
-  if (!isOldPasswordMatch) {
-    throw new AppError(httpStatus.UNAUTHORIZED, "Old Password does not match");
-  }
+}
+const resetPassword = async (oldPassword: string, newPassword: string, decodedToken: JwtPayload) => {
 
-  user!.password = await bcryptjs.hash(
-    newPassword,
-    Number(envVars.BCRYPT_SALT_ROUND)
-  );
+    const user = await User.findById(decodedToken.userId)
 
-  user!.save();
-};
+    const isOldPasswordMatch = await bcryptjs.compare(oldPassword, user!.password as string)
+    if (!isOldPasswordMatch) {
+        throw new AppError(httpStatus.UNAUTHORIZED, "Old Password does not match");
+    }
 
-//user - login - token (email, role, _id) - booking / payment / booking / payment cancel - token
+    user!.password = await bcryptjs.hash(newPassword, Number(envVars.BCRYPT_SALT_ROUND))
+
+    user!.save();
+
+
+}
+
+//user - login - token (email, role, _id) - booking / payment / booking / payment cancel - token 
 
 export const AuthServices = {
-  // credentialsLogin,
-  getNewAccessToken,
-  resetPassword,
-};
+    // credentialsLogin,
+    getNewAccessToken,
+    resetPassword
+}
