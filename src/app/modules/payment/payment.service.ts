@@ -37,7 +37,7 @@ const initPayment = async (bookingId: string) => {
   const sslPayment = await SSLService.sslPaymentInit(sslPayload);
 
   return {
-    paymentUrl: sslPayment.GatewayPageURL(),
+    paymentUrl: sslPayment.GatewayPageURL,
   };
 };
 const successPayment = async (query: Record<string, string>) => {
